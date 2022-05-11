@@ -4,10 +4,14 @@
 Created on Wed May 11 14:28:09 2022
 
 @author: jrouss
+Class Patern
+Generate a single line that goes throught multiples points
+define if the line touch one of the side with the "isLeft/isRight/isTop/isBottom" accessor 
 """
+
 import random
 class Patern:
-    def __init__(self,size=300,increment=100,number_points=6):
+    def __init__(self,size=300,increment=100,number_points=6,long_line=1):
         points = []
         for i in range(0,size+1,increment):
             for j in range(0,size+1,increment):
@@ -17,8 +21,8 @@ class Patern:
         
         current_point = random.choice(points)
         for i in range(0,number_points):
-            close_points = [point for point in points if( point  not in self.actual_point) and ((point[0]-current_point[0])**2 <= increment**2 ) 
-                            and  ((point[1]-current_point[1])**2 <= increment**2 )]
+            close_points = [point for point in points if( point  not in self.actual_point) and ((point[0]-current_point[0])**2 <= (increment**2)*long_line**2 ) 
+                            and  ((point[1]-current_point[1])**2 <= (increment**2 )*long_line**2)]
             
             self.actual_point.append(current_point)
             if len(close_points )== 0:
@@ -40,3 +44,11 @@ class Patern:
         return len(self.top) >0
     def isBottom(self):
         return len(self.bottom) >0
+    def isLineLeft(self):
+        return len(self.left) >1
+    def isLineRight(self):
+        return len(self.right) >1
+    def isLineTop(self):
+        return len(self.top) >1
+    def isLineBottom(self):
+        return len(self.bottom) >1
