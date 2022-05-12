@@ -93,8 +93,49 @@ def symbol_weighted(output_path):
             """
     image.show()
     image.save(output_path)
- 
+
+def generate_patern(n=12,size=10):
     
+    increment = 2
+    number_points = 5#int(size/30)
+    show_triangle = False
+    show_point = False
+    show_grid = False
+    patterns = []
+   
+    
+    for i in range(n):
+        image = Image.new("RGB", (size, size), "white")
+        draw = ImageDraw.Draw(image)
+        output_path = "patterns/pattern_"+str(i)+".bmp"
+        p = Patern(size=size,increment=increment,number_points=number_points,long_line=1)
+        points = p.getPoints()
+        
+        r=size/60
+        Allpoints = []
+        """Draw grid"""
+        if show_grid:
+            coinPoints = [(0+size,0+size),(size,0+size),(size,size),(0+size,size)]
+            draw.line(coinPoints,width=2, fill="black")
+        
+        """Draw all points"""
+        for x in range(0,size+1,increment):
+            for y in range(0,size+1,increment):
+                Allpoints.append((x,y))
+        DrawCircles(Allpoints, r, draw, fill="pink")
+        
+        """Draw the lines of the patern, and the consistuant point"""
+        draw.line(points,width=2, fill="red")
+        #draw.line(second_point,width=5, fill="green", joint="curve")
+        
+        if show_point:
+            DrawCircles(points,r,draw,"purple")
+            DrawCircle(points[0],r,draw,"green")
+        #image.show()
+        image.save(output_path)
+        patterns.append(p)
+    return patterns
+
 if __name__ == "__main__":
-    symbol_weighted("jointed_lines.jpg")
-    
+    #symbol_weighted("jointed_lines.jpg")
+    generate_patern()

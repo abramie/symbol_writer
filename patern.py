@@ -33,7 +33,7 @@ class Patern:
         
         self.top = [point for point in self.actual_point if point[1] == 0]
         self.bottom = [point for point in self.actual_point if point[1] == size]
-    
+        self.side = [self.isRight(),self.isTop(),self.isLeft(),self.isBottom()]
     def getPoints(self):
         return self.actual_point
     def isLeft(self):
