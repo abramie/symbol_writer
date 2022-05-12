@@ -94,13 +94,14 @@ def symbol_weighted(output_path):
     image.show()
     image.save(output_path)
 
-def generate_patern(n=12,size=10):
+def generate_patern(n=12,size=100):
     
-    increment = 2
-    number_points = 5#int(size/30)
+    increment =  int(size/4)
+    number_points = 5
     show_triangle = False
     show_point = False
     show_grid = False
+    show_all_point = False
     patterns = []
    
     
@@ -115,15 +116,26 @@ def generate_patern(n=12,size=10):
         Allpoints = []
         """Draw grid"""
         if show_grid:
-            coinPoints = [(0+size,0+size),(size,0+size),(size,size),(0+size,size)]
-            draw.line(coinPoints,width=2, fill="black")
-        
+            coinPoints = [(0.1,0.1),(size-0.1,0.1),(size-0.1,size-0.1),(0.1,size-0.1),(0.1,0.1)]
+            draw.line(coinPoints,width=1, fill="black")
+            
         """Draw all points"""
-        for x in range(0,size+1,increment):
-            for y in range(0,size+1,increment):
-                Allpoints.append((x,y))
-        DrawCircles(Allpoints, r, draw, fill="pink")
+        if show_all_point:
+            for x in range(0,size+1,increment):
+                for y in range(0,size+1,increment):
+                    Allpoints.append((x,y))
+            DrawCircles(Allpoints, r, draw, fill="pink")
         
+        if show_triangle:
+            if p.isTop():
+                draw.polygon([(size/2,0),((size/2)-(r*2),(r*2)),((size/2)+(r*2),(r*2))],fill="green")
+            if p.isBottom():
+                draw.polygon([(size/2,size),(size/2-(r*2),size-(r*2)),(size/2+(r*2),size-(r*2))],fill="green")
+            if p.isLeft():
+                draw.polygon([(0,size/2),((r*2),(size/2)-(r*2)),((r*2),(size/2)+(r*2))],fill="green")
+            if p.isRight():
+                draw.polygon([(size,size/2),(size-(r*2),(size/2-(r*2))),((size-(r*2),size/2+(r*2)))],fill="green")
+              
         """Draw the lines of the patern, and the consistuant point"""
         draw.line(points,width=2, fill="red")
         #draw.line(second_point,width=5, fill="green", joint="curve")
