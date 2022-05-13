@@ -9,7 +9,7 @@ import random
 from maths import * 
 # draw_jointed_line.py
 from PIL import Image, ImageDraw, ImageFont
-from patern import Patern
+from patern import Patern, Patern_max
 def symbol_random(output_path):
     image = Image.new("RGB", (400, 400), "red")
     points = []
@@ -94,25 +94,30 @@ def symbol_weighted(output_path):
     image.show()
     image.save(output_path)
 
-def generate_patern(n=12,size=100):
+def generate_patern(n=1,size=100,number_points = 5,show_triangle = False,show_point = False,show_grid = False,show_all_point = False):
     
     increment =  int(size/4)
-    number_points = 5
-    show_triangle = False
-    show_point = False
-    show_grid = False
-    show_all_point = False
+    
+    
     patterns = []
-   
+    nb_complete = 0
     
     for i in range(n):
         image = Image.new("RGB", (size, size), "white")
         draw = ImageDraw.Draw(image)
         output_path = "patterns/pattern_"+str(i)+".bmp"
-        p = Patern(size=size,increment=increment,number_points=number_points,long_line=1)
+        if nb_complete < 5:
+            while True:
+                p = Patern_max(size=size,increment=increment,number_points=number_points*2,long_line=1)
+                if p.isComplete():
+                    break
+        else:
+            # print("nombre before complete",i)
+            p = Patern(size=size,increment=increment,number_points=number_points,long_line=1)
         points = p.getPoints()
-        
-        r=size/60
+        if p.isComplete():
+            nb_complete = nb_complete +1
+        r=size/30
         Allpoints = []
         """Draw grid"""
         if show_grid:
@@ -137,17 +142,31 @@ def generate_patern(n=12,size=100):
                 draw.polygon([(size,size/2),(size-(r*2),(size/2-(r*2))),((size-(r*2),size/2+(r*2)))],fill="green")
               
         """Draw the lines of the patern, and the consistuant point"""
+        
         draw.line(points,width=2, fill="red")
         #draw.line(second_point,width=5, fill="green", joint="curve")
         
         if show_point:
             DrawCircles(points,r,draw,"purple")
             DrawCircle(points[0],r,draw,"green")
+            DrawCircle(points[len(points)-1],r,draw,"blue")
         #image.show()
         image.save(output_path)
         patterns.append(p)
+    print("nb complete : ", nb_complete)
     return patterns
 
 if __name__ == "__main__":
     #symbol_weighted("jointed_lines.jpg")
-    generate_patern()
+    size = 100
+    nb_pattern = 50
+    number_points = 6
+    show_triangle = True
+    show_point = True
+    show_grid = True
+    show_all_point = True
+    size_grid = 5
+    generate_patern(nb_pattern,size,number_points,show_triangle,show_point,show_grid,show_all_point)
+    img = Image.open("patterns/pattern_0.bmp")
+    img.show()
+    

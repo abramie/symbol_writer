@@ -10,40 +10,50 @@ define if the line touch one of the side with the "isLeft/isRight/isTop/isBottom
 """
 
 import random
+import numpy as np
 class Patern:
     def __init__(self,size=300,increment=100,number_points=6,long_line=1):
-        points = []
+        self.points = []
+        
+        self.size = size
+        self.create_point(size,increment,number_points,long_line)
+        
+        
+        
+        
+        self.side = [self.isRight(),self.isTop(),self.isLeft(),self.isBottom()]
+    def create_point(self,size,increment,number_points,long_line):
         for i in range(0,size+1,increment):
             for j in range(0,size+1,increment):
-                points.append((i,j))
+                self.points.append((i,j))
         
         self.actual_point = []
         
-        current_point = random.choice(points)
+        current_point = random.choice(self.points)
         for i in range(0,number_points):
-            close_points = [point for point in points if( point  not in self.actual_point) and ((point[0]-current_point[0])**2 <= (increment**2)*long_line**2 ) 
+            close_points = [point for point in self.points if( point  not in self.actual_point) and ((point[0]-current_point[0])**2 <= (increment**2)*long_line**2 ) 
                             and  ((point[1]-current_point[1])**2 <= (increment**2 )*long_line**2)]
             
             self.actual_point.append(current_point)
             if len(close_points )== 0:
                 break
             current_point = random.choice(close_points)
-        self.left = [point for point in self.actual_point if point[0] == 0]
-        self.right = [point for point in self.actual_point if point[0] == size]
-        
-        self.top = [point for point in self.actual_point if point[1] == 0]
-        self.bottom = [point for point in self.actual_point if point[1] == size]
-        self.side = [self.isRight(),self.isTop(),self.isLeft(),self.isBottom()]
     def getPoints(self):
         return self.actual_point
     def isLeft(self):
+        self.left = [point for point in self.actual_point if point[0] == 0]
         return len(self.left) >0
     def isRight(self):
+        self.right = [point for point in self.actual_point if point[0] == self.size]
         return len(self.right) >0
     def isTop(self):
+        self.top = [point for point in self.actual_point if point[1] == 0]
         return len(self.top) >0
     def isBottom(self):
+        self.bottom = [point for point in self.actual_point if point[1] == self.size]
         return len(self.bottom) >0
+    def isComplete(self):
+        return self.isLeft() and self.isRight() and self.isTop() and self.isBottom()
     def isLineLeft(self):
         return len(self.left) >1
     def isLineRight(self):
@@ -52,3 +62,62 @@ class Patern:
         return len(self.top) >1
     def isLineBottom(self):
         return len(self.bottom) >1
+class Patern_max(Patern):
+    def create_point(self,size,increment,number_points,long_line):
+        actif_ll = long_line
+        for i in range(0,size+1,increment):
+            for j in range(0,size+1,increment):
+                self.points.append((i,j))
+        
+        self.actual_point = []
+        
+        current_point = random.choice(self.points)
+        for i in range(0,number_points):
+            close_points = [point for point in self.points if( point  not in self.actual_point) and ((point[0]-current_point[0])**2 <= (increment**2)*actif_ll**2 ) 
+                            and  ((point[1]-current_point[1])**2 <= (increment**2 )*actif_ll**2)]
+            
+            self.actual_point.append(current_point)
+            
+            if len(close_points )== 0 and not self.isComplete() :
+                if actif_ll == long_line:
+                    actif_ll = long_line*2
+                    continue
+                else:
+                    break
+            weight = np.full(len(close_points), 5)
+            for i in range(len(close_points)):
+                
+                p = close_points[i]
+                
+                self.left = [point for point in self.actual_point if point[0] == 0]
+                self.right = [point for point in self.actual_point if point[0] == size]
+                
+                self.top = [point for point in self.actual_point if point[1] == 0]
+                self.bottom = [point for point in self.actual_point if point[1] == size]
+                
+                if (current_point[0] == 0 and p[0] == 0) or (current_point[1] == 0 and p[1] == 0) \
+                    or (current_point[0] == size and p[0] == size) or (current_point[1] == size and p[1] == size):
+                        weight[i] = 1
+                if not self.isLeft() and p[0] < current_point[0]:
+                    weight[i] = 10
+                if not self.isRight() and p[0] > current_point[0]:
+                    weight[i] = 10
+                if not self.isTop() and p[1] < current_point[1]:
+                    weight[i] = 10
+                if not self.isBottom() and p[1] > current_point[1]:
+                    weight[i] = 10
+                
+                    
+            current_point = random.choices(close_points, weights=weight,k=1)[0]
+
+
+
+
+
+
+
+
+
+
+
+
