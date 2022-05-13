@@ -18,7 +18,7 @@ from IPython import display
 from maths import find_true, Direction
 from line import * 
 from exception import noMorePattern
-
+import math 
 def blend_many(ims):
     """
     Blends a sequence of images.
@@ -56,6 +56,7 @@ def show_state(potential, tiles):
     return Image.fromarray(images)
 def run_iteration(old_potential,weights,tiles,size_grid):
     potential = old_potential.copy()
+    
     to_collapse = location_with_fewest_choices(potential,size_grid) #3
     if to_collapse is None:                               #1
         raise StopIteration()
@@ -88,8 +89,16 @@ def run_iteration_middle(old_potential,weights,tiles,size_grid):
 def location_with_fewest_choices(potential,size_grid):
     num_choices = np.sum(potential, axis=2, dtype='float32')
     num_choices[num_choices == 1] = np.inf
-    candidate_locations = find_true(num_choices == num_choices.min())
-    location = random.choice(candidate_locations)
+    # print("numchoices", num_choices)
+    # candidate_locations = find_true(num_choices == num_choices.min())
+    candidate_locations = find_true(num_choices != np.inf)
+    # print(candidate_locations)
+    """It's more propbable to select a square close to the center"""
+    weight_location = np.full(len(candidate_locations), 1)
+    for i in range(len(candidate_locations)):
+        # print(i)
+        weight_location[i] = 10-math.dist([candidate_locations[i][0],candidate_locations[i][1]] , [int((size_grid-1)/2),int((size_grid-1)/2)])
+    location = random.choices(candidate_locations,weights=weight_location,k=1)[0]
     if num_choices[location] == np.inf:
         return None
     return location
@@ -243,7 +252,7 @@ def waveCollapse(n=26,size_grid=5,*args):
     out = io.BytesIO()
     
     images[0].save("gid_result.gif", format='gif', save_all=True, append_images=images[1:],
-                   duration=50, loop=0)
+                   duration=100, loop=0)
     images[len(images)-1].save("resultat.jpg")
     images[-1]
 
