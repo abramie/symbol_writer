@@ -106,6 +106,12 @@ def generate_patern(n=1,size=100,number_points = 5,show_triangle = False,show_po
         image = Image.new("RGB", (size, size), "white")
         draw = ImageDraw.Draw(image)
         output_path = "patterns/pattern_"+str(i)+".bmp"
+        #Generate a blank pattern
+        if i ==0:
+            p = Patern(size=size,number_points=0)
+            image.save(output_path)
+            patterns.append(p)
+            continue
         if nb_complete < 5:
             while True:
                 p = Patern_max(size=size,increment=increment,number_points=number_points*2,long_line=1)
@@ -113,7 +119,11 @@ def generate_patern(n=1,size=100,number_points = 5,show_triangle = False,show_po
                     break
         else:
             # print("nombre before complete",i)
-            p = Patern(size=size,increment=increment,number_points=number_points,long_line=1)
+            while True:
+                p = Patern(size=size,increment=increment,number_points=number_points,long_line=1)
+                if not p.isContained():
+                    break
+        
         points = p.getPoints()
         if p.isComplete():
             nb_complete = nb_complete +1
@@ -131,6 +141,8 @@ def generate_patern(n=1,size=100,number_points = 5,show_triangle = False,show_po
                     Allpoints.append((x,y))
             DrawCircles(Allpoints, r, draw, fill="pink")
         
+        
+        
         if show_triangle:
             if p.isTop():
                 draw.polygon([(size/2,0),((size/2)-(r*2),(r*2)),((size/2)+(r*2),(r*2))],fill="green")
@@ -142,8 +154,11 @@ def generate_patern(n=1,size=100,number_points = 5,show_triangle = False,show_po
                 draw.polygon([(size,size/2),(size-(r*2),(size/2-(r*2))),((size-(r*2),size/2+(r*2)))],fill="green")
               
         """Draw the lines of the patern, and the consistuant point"""
-        
-        draw.line(points,width=2, fill="red")
+        if p.isContained():
+            draw.line( [(0.1,0.1),(size-0.1,size-0.1),(size-0.1,0.1),(0.1,size-0.1),(0.1,0.1)],width=4,fill="blue")
+            print("contained one")
+        else:
+            draw.line(points,width=2, fill="red")
         #draw.line(second_point,width=5, fill="green", joint="curve")
         
         if show_point:

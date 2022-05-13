@@ -41,19 +41,21 @@ class Patern:
     def getPoints(self):
         return self.actual_point
     def isLeft(self):
-        self.left = [point for point in self.actual_point if point[0] == 0]
+        self.left = [point for point in self.actual_point if point[0] == 0 and point[1] != 0 and point[1] != self.size]
         return len(self.left) >0
     def isRight(self):
-        self.right = [point for point in self.actual_point if point[0] == self.size]
+        self.right = [point for point in self.actual_point if point[0] == self.size and point[1] != 0 and point[1] != self.size]
         return len(self.right) >0
     def isTop(self):
-        self.top = [point for point in self.actual_point if point[1] == 0]
+        self.top = [point for point in self.actual_point if point[1] == 0 and point[0] != 0 and point[0] != self.size ]
         return len(self.top) >0
     def isBottom(self):
-        self.bottom = [point for point in self.actual_point if point[1] == self.size]
+        self.bottom = [point for point in self.actual_point if point[1] == self.size and point[0] != 0 and point[0] != self.size]
         return len(self.bottom) >0
     def isComplete(self):
         return self.isLeft() and self.isRight() and self.isTop() and self.isBottom()
+    def isContained(self):
+        return not (self.isLeft() or self.isRight() or self.isTop() or self.isBottom())
     def isLineLeft(self):
         return len(self.left) >1
     def isLineRight(self):

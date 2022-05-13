@@ -17,7 +17,7 @@ from IPython import display
 
 from maths import find_true, Direction
 from line import * 
-    
+from exception import noMorePattern
 
 def blend_many(ims):
     """
@@ -60,7 +60,7 @@ def run_iteration(old_potential,weights,tiles,size_grid):
     if to_collapse is None:                               #1
         raise StopIteration()
     elif not np.any(potential[to_collapse]):              #2
-        raise Exception(f"No choices left at {to_collapse}")
+        raise noMorePattern(f"No choices left at {to_collapse}")
     else:                                                 #4 ↓
         nonzero = find_true(potential[to_collapse])
         tile_probs = weights[nonzero]/sum(weights[nonzero])
@@ -76,7 +76,7 @@ def run_iteration_middle(old_potential,weights,tiles,size_grid):
     if to_collapse is None:                               #1
         raise StopIteration()
     elif not np.any(potential[to_collapse]):              #2
-        raise Exception(f"No choices left at {to_collapse}")
+        raise noMorePattern(f"No choices left at {to_collapse}")
     else:                                                 #4 ↓
         nonzero = find_true(potential[to_collapse])
         tile_probs = weights[nonzero]/sum(weights[nonzero])
@@ -140,7 +140,7 @@ def add_constraint(potential, location, incoming_direction, possible_tiles,tiles
             potential[location][i_p] = False
             changed = True
     if not np.any(potential[location]):
-        raise Exception(f"No patterns left at {location}")
+        raise noMorePattern(f"No patterns left at {location}")
     return changed
 Tile = namedtuple('Tile', ('name', 'bitmap', 'sides', 'weight'))
 empty_tile = Tile("empty",None,[False,False,False,False],0)
@@ -232,6 +232,9 @@ def waveCollapse(n=26,size_grid=5,*args):
             images.append(show_state(p, tiles))  # Move me for speed
         except StopIteration as e:
             break
+        except noMorePattern as e:
+            raise
+            
         except Exception as e:
             print(e)
             break
@@ -257,13 +260,18 @@ if __name__ == "__main__":
     nb_pattern = 50
     number_points = 6
     show_triangle = False
-    show_point = True
+    show_point = False
     show_grid = False
     show_all_point = False
-    size_grid = 5
+    size_grid = 3
     #symbol_weighted("jointed_lines.jpg")
-    waveCollapse(nb_pattern,size_grid,size,number_points,show_triangle,show_point,show_grid,show_all_point)
-
+    for i in range(4):
+        try:
+            
+            waveCollapse(nb_pattern,size_grid,size,number_points,show_triangle,show_point,show_grid,show_all_point)
+            break
+        except noMorePattern as e:
+            print("error no more pattern",e)
 
 
 
