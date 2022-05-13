@@ -112,7 +112,9 @@ def generate_patern(n=1,size=100,number_points = 5,show_triangle = False,show_po
             image.save(output_path)
             patterns.append(p)
             continue
-        if nb_complete < 5:
+        goal_nb_complete = 5 if n<=50 else n/10
+        #print("goal nb complete : ",goal_nb_complete)
+        if nb_complete < goal_nb_complete:
             while True:
                 p = Patern_max(size=size,increment=increment,number_points=number_points*2,long_line=1)
                 if p.isComplete():

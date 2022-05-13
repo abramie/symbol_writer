@@ -19,6 +19,7 @@ from maths import find_true, Direction
 from line import * 
 from exception import noMorePattern
 import math 
+import traceback
 def blend_many(ims):
     """
     Blends a sequence of images.
@@ -94,11 +95,23 @@ def location_with_fewest_choices(potential,size_grid):
     candidate_locations = find_true(num_choices != np.inf)
     # print(candidate_locations)
     """It's more propbable to select a square close to the center"""
+    if len(candidate_locations) == 0:
+        return None
+    dist = np.array([int(math.dist([c[0],c[1]] , [int((size_grid-1)/2),int((size_grid-1)/2)]))**3 for c in candidate_locations])
+    # print(dist)
+    #candidate_locations = find_true(dist == dist.min())
+    
     weight_location = np.full(len(candidate_locations), 1)
-    for i in range(len(candidate_locations)):
+    # for i in range(len(candidate_locations)):
         # print(i)
-        weight_location[i] = 10-math.dist([candidate_locations[i][0],candidate_locations[i][1]] , [int((size_grid-1)/2),int((size_grid-1)/2)])
+    
+    weight_location = [200-int(math.dist([c[0],c[1]] , [int((size_grid-1)/2),int((size_grid-1)/2)]))**3 for c in candidate_locations]
+    # print(dist.max())
+    # print(weight_location)
     location = random.choices(candidate_locations,weights=weight_location,k=1)[0]
+    # print("location ?", location)
+    # print("size candiates", len(candidate_locations))
+    # print("size numchoice", len(num_choices))
     if num_choices[location] == np.inf:
         return None
     return location
@@ -245,14 +258,15 @@ def waveCollapse(n=26,size_grid=5,*args):
             raise
             
         except Exception as e:
-            print(e)
+            print("exception",e)
+            print (traceback.format_exc())
             break
     images.append(show_state(p, tiles))
     display.display(images[len(images)-1])    
     out = io.BytesIO()
     
     images[0].save("gid_result.gif", format='gif', save_all=True, append_images=images[1:],
-                   duration=100, loop=0)
+                   duration=200, loop=0)
     images[len(images)-1].save("resultat.jpg")
     images[-1]
 
@@ -266,13 +280,13 @@ def waveCollapse(n=26,size_grid=5,*args):
 
 if __name__ == "__main__":
     size = 100
-    nb_pattern = 50
+    nb_pattern = 200
     number_points = 6
     show_triangle = False
     show_point = False
     show_grid = False
     show_all_point = False
-    size_grid = 3
+    size_grid = 8
     #symbol_weighted("jointed_lines.jpg")
     for i in range(4):
         try:

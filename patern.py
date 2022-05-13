@@ -37,7 +37,11 @@ class Patern:
             self.actual_point.append(current_point)
             if len(close_points )== 0:
                 break
-            current_point = random.choice(close_points)
+            try:
+                current_point = random.choice(close_points)
+            except Exception as e:
+                print(e)
+                continue
     def getPoints(self):
         return self.actual_point
     def isLeft(self):
@@ -109,8 +113,11 @@ class Patern_max(Patern):
                 if not self.isBottom() and p[1] > current_point[1]:
                     weight[i] = 10
                 
-                    
-            current_point = random.choices(close_points, weights=weight,k=1)[0]
+            try:
+                current_point = random.choices(close_points, weights=weight,k=1)[0]
+            except Exception as e:
+                print(e)
+                continue
 
 
 
