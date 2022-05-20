@@ -10,6 +10,8 @@ from maths import *
 # draw_jointed_line.py
 from PIL import Image, ImageDraw, ImageFont
 from patern import Patern, Patern_max
+
+import timeit
 def symbol_random(output_path):
     image = Image.new("RGB", (400, 400), "red")
     points = []
@@ -102,6 +104,11 @@ def generate_patern(n=1,size=100,number_points = 5,show_triangle = False,show_po
     patterns = []
     nb_complete = 0
     
+    start = timeit.timeit()
+    nb_left = 0
+    nb_right = 0
+    nb_top =0
+    nb_bottom = 0
     for i in range(n):
         image = Image.new("RGB", (size, size), "white")
         draw = ImageDraw.Draw(image)
@@ -110,6 +117,7 @@ def generate_patern(n=1,size=100,number_points = 5,show_triangle = False,show_po
         if i ==0:
             p = Patern(size=size,number_points=0)
             image.save(output_path)
+            print(p.side)
             patterns.append(p)
             continue
         goal_nb_complete = 5 if n<=50 else n/10
@@ -117,6 +125,7 @@ def generate_patern(n=1,size=100,number_points = 5,show_triangle = False,show_po
         if nb_complete < goal_nb_complete:
             while True:
                 p = Patern_max(size=size,increment=increment,number_points=number_points*2,long_line=1)
+                
                 if p.isComplete():
                     break
         else:
@@ -124,8 +133,16 @@ def generate_patern(n=1,size=100,number_points = 5,show_triangle = False,show_po
             while True:
                 p = Patern(size=size,increment=increment,number_points=number_points,long_line=1)
                 if not p.isContained():
+                    if not p.isLeft():
+                        nb_left = nb_left +1
+                    if not p.isRight():
+                        nb_right = nb_right +1
+                    if not p.isTop():
+                        nb_top = nb_top +1
+                    if not p.isBottom():
+                        nb_bottom = nb_bottom +1
                     break
-        
+                
         points = p.getPoints()
         if p.isComplete():
             nb_complete = nb_complete +1
@@ -169,7 +186,11 @@ def generate_patern(n=1,size=100,number_points = 5,show_triangle = False,show_po
             DrawCircle(points[len(points)-1],r,draw,"blue")
         #image.show()
         image.save(output_path)
+        
         patterns.append(p)
+    end = timeit.timeit()
+    print("temps generation pattern_max : " + str(end - start))
+    print("nb not right",nb_right,"nb not left",nb_left,"not nb_top",nb_top,"not nb_bottom",nb_bottom)
     print("nb complete : ", nb_complete)
     return patterns
 

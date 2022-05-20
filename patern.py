@@ -18,9 +18,10 @@ class Patern:
         self.size = size
         self.create_point(size,increment,number_points,long_line)
         
-        
-        
-        
+        self.left = [point for point in self.actual_point if point[0] == 0 and point[1] != 0 and point[1] != self.size]
+        self.right = [point for point in self.actual_point if point[0] == self.size and point[1] != 0 and point[1] != self.size]
+        self.top = [point for point in self.actual_point if point[1] == 0 and point[0] != 0 and point[0] != self.size ]
+        self.bottom = [point for point in self.actual_point if point[1] == self.size and point[0] != 0 and point[0] != self.size]
         self.side = [self.isRight(),self.isTop(),self.isLeft(),self.isBottom()]
     def create_point(self,size,increment,number_points,long_line):
         for i in range(0,size+1,increment):
@@ -45,16 +46,16 @@ class Patern:
     def getPoints(self):
         return self.actual_point
     def isLeft(self):
-        self.left = [point for point in self.actual_point if point[0] == 0 and point[1] != 0 and point[1] != self.size]
+        
         return len(self.left) >0
     def isRight(self):
-        self.right = [point for point in self.actual_point if point[0] == self.size and point[1] != 0 and point[1] != self.size]
+        
         return len(self.right) >0
     def isTop(self):
-        self.top = [point for point in self.actual_point if point[1] == 0 and point[0] != 0 and point[0] != self.size ]
+        
         return len(self.top) >0
     def isBottom(self):
-        self.bottom = [point for point in self.actual_point if point[1] == self.size and point[0] != 0 and point[0] != self.size]
+        
         return len(self.bottom) >0
     def isComplete(self):
         return self.isLeft() and self.isRight() and self.isTop() and self.isBottom()
@@ -118,6 +119,7 @@ class Patern_max(Patern):
             except Exception as e:
                 print(e)
                 continue
+        #print("Pattern generate")
 
 
 
